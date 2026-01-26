@@ -1,14 +1,14 @@
-# Network Design Project – Phase Proposal & Design Document (Phase __ of 5)
+# Network Design Project – Phase Proposal & Design Document (Phase 1 of 5)
 
 > **Purpose:** This document is your team’s *proposal* for how you will implement the current phase **before** you start coding.  
 > Keep it clear, concrete, and lightweight.
 
-**Team Name:**  
-**Members:** (Name, email)  
-**GitHub Repo URL (with GitHub usernames):**  
-**Phase:** (1 / 2 / 3 / 4 / 5)  
-**Submission Date:**  
-**Version:** (v1 / resubmission v2 / etc.)
+**Team Name: INdividual**  
+**Members: Cody Nguyen, cody_nguyen@student.uml.edu**   
+**GitHub Repo URL (with GitHub usernames): https://github.com/codynguyen-dev/nguyen-network-design.git (codynguyen-dev)**  
+**Phase: 1** 
+**Submission Date: 1/26/26**  
+**Version: v1**
 
 ---
 
@@ -16,6 +16,9 @@
 In **5–8 sentences**, describe what you are adding/creating in *this* phase, what “done” means, and how you’ll validate it (demo + tests + figures).
 
 ---
+
+In Phase 1(a), I will implement two UDP-based programs in Python (a UDP client and UDP server for basic message exchange) and a UDP-based file transfer tool using the RDT 1.0 protocol. The client will send a message (ex: "Hello") to the server, and the server will echo the message back to the client using UDP sockets on different port numbers. For Phase 1(b), the sender will read a file as binary data, break it into fixed size chunks, and send those data packets one at a time over UDP to the receiver. The receiver will reassemble the file by writing packet payloads in order, producing an output file that matches the original. Phase 1 will be complete when 
+both parts run reliably end-end and the final received file matches the sent file perfectly. Correctness will be validated with a screen recorded demo of the required scenarios plus visible verification. 
 
 ## 1) Phase requirements
 ### 1.1 Demo deliverable
@@ -30,17 +33,17 @@ Fill in the scenarios required by the phase spec.
 
 | Scenario | What you will inject / configure | Expected observable behavior | What we will see in the video |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
+| 1 | Start UDP server and client on different ports, client sends "HELLO" to server | Server receives "HELLO" and echoes it back to client| Terminal shows server received message and client received echo |
+| 2 | Transfer a small file (probably BMP) using RDT 1.0, payload size = 1024 bytes | Sender transmits packets one at a time, receiver reconstructs file correctly | Output successfully and visually matches the original |
+| 3 | N/A |  |  |
 
 ### 1.3 Required figures / plots
 Fill in the figures/plots required by the phase spec (if none, write “N/A”).
 
 | Figure/Plot | X-axis | Y-axis | Sweep range + step | Data source (CSV/log) | Output filename |
 |---|---|---|---|---|---|
-| 1 |  |  |  |  |  |
-| 2 |  |  |  |  |  |
+| 1 | N/A |  |  |  |  |
+| 2 | N/A |  |  |  |  |
 
 ---
 
@@ -48,23 +51,27 @@ Fill in the figures/plots required by the phase spec (if none, write “N/A”).
 Think of this as a short “implementation proposal” you’d write at a company.
 
 ### 2.1 Scope: what changes/additions this phase
-- **New behaviors added:**
-- **Behaviors unchanged from previous phase:**
-- **Out of scope (explicitly):**
+- **New behaviors added: Phase 1(a): UDP client sends “HELLO” to UDP server; UDP server echoes back to client. Phase 1(b): Implement RDT 1.0 file transfer over UDP (split file into fixed data packets, send one packet at a time, reassemble in order).**
+- **Behaviors unchanged from previous phase: N/A**
+- **Out of scope (explicitly): Any loss or corruption prevention, performance experiments, timeouts and retransmissions**
 
 ### 2.2 Acceptance criteria (your checklist)
 List 5–10 measurable checks that mean you’re done (examples below).
-
+- [ ] UDP server and client start and bind to chosen ports
 - [ ] Sender/receiver run with standard CLI flags
 - [ ] All required scenarios demonstrated in the video
+- [ ] Server and client demonstrate two-way communication
+- [ ] File transfer splits file into fixed-size packets (1024 bytes per payload)
+- [ ] REceiver assemblex file packets in correct order and outputs correct file
 - [ ] Output file matches input file (byte-for-byte)
 - [ ] Figures/plots generated and saved under `results/`
 - [ ] Re-run is reproducible using the same seed
 
 ### 2.3 Work breakdown (high-level; Person X will work on A, Person Y will work on B...)
-- Workstream A:
-- Workstream B:
-- Workstream C:
+- Workstream A: Phase 1(a) UDP echo client/server 
+- Workstream B: Phase 1(b) packet format + packet encode/decode
+- Workstream C: Phase 1(b) sender/receiver logic + reassembley
+- Workstream D: DESIGN DOC + README + demo commands 
 
 ---
 
@@ -86,26 +93,27 @@ For each phase:
 
 ### 3.2 Component responsibilities
 - **Sender**
-  - responsibilities:
+  - responsibilities: reads input file bytes, packetizes file into fixed-size payload chunks (1024B target), constructs RDT 1.0 “packets”, and sends each packet via UDP to receiver (one at a time)
 - **Receiver**
-  - responsibilities:
+  - responsibilities: listens on UDP port, can echo messages, receives packet bytes, and extracts payload and writes to output file in order
 - **Shared modules/utilities**
-  - packet encode/decode:
-  - checksum:
-  - logging/timing:
-  - CLI/config parsing:
+  - packet encode/decode: packets into bytes, parse bytes back into original data
+  - checksum: verify data integrity
+  - logging/timing: basic printing/logging for debugging
+  - CLI/config parsing: parse --host, --port, --file, --out
 
 ### 3.3 Message flow overview
 Add a simple diagram (box + arrows is fine, you're also welcome to use software with screenshots).
 
-Example:
-```
-[file] -> Sender -> UDP -> Receiver -> [output file]
-              ^             |
-              |---- ACK ----|
-```
+Phase 1(a) message flow:
 
----
+[Client]  ---- "HELLO" ---->  [Server]
+[Client]  <--- "HELLO"  ----  [Server] (echo)
+
+Phase 1(b) file transfer flow: 
+
+[file bytes] -> Sender -> UDP -> Receiver -> [output file bytes]
+
 
 ## 4) Packet format (high-level spec)
 Define your on-the-wire format **unambiguously**.
@@ -113,7 +121,6 @@ Define your on-the-wire format **unambiguously**.
 ### 4.1 Packet types
 List the packet types you will send:
 - Data packet
-- ACK packet
 - (Optional) end-of-transfer marker / metadata packet
 
 ### 4.2 Header fields (this is the “field table”)
@@ -122,11 +129,8 @@ This ensures everyone can encode/decode packets consistently.
 
 | Field | Size (bytes/bits) | Type | Description | Notes |
 |---|---:|---|---|---|
-| type |  |  | data vs ack |  |
 | seq |  |  | sequence number |  |
-| ack |  |  | ack number / flag |  |
 | len |  |  | payload length | last packet may be smaller |
-| checksum |  |  | checksum value | what it covers (header/payload) |
 | payload | ≤ ~1024B | bytes | file chunk | binary-safe |
 
 ---
@@ -137,21 +141,26 @@ This section prevents “random globals everywhere” and helps keep code mainta
 ### 5.1 Key data structures
 List the core structures you will store in memory.
 
-Examples:
-- sender window buffer:
-- receiver buffer (out-of-order):
-- retransmission timer state:
-- metrics collection structure (for plots):
+Sender:
+- seq_num (int): increments for every packet
+- payload_size (int): fixed at 1024 bytes
 
-For each structure, document:
-- fields
-- invariants (what must always be true)
-- where it lives (module/file)
+Receiver:
+- expected_seq (int): next expected sequence number
+- output_file_handle: file opened in write-binary mode
+
+invariants: 
+- Packets are written in ascending seq order
+- Each data packet’s payload length equals the len field
+- Receiver writes only len bytes for the final packet
+
 
 ### 5.2 Module map + dependencies
 Show how modules connect.
 
 Minimum expected modules (names may vary):
+- `src/udp_client.*`
+- `src/udp_server.*`
 - `src/sender.*`
 - `src/receiver.*`
 - `src/packet.*` (encode/decode)
@@ -160,14 +169,15 @@ Minimum expected modules (names may vary):
 - `scripts/plot_results.*` (if applicable)
 
 Provide a simple dependency sketch:
-
-```
-sender -> packet, checksum, utils
-receiver -> packet, checksum, utils
-scripts -> sender/receiver CLI, results CSV, plotting
-```
-
 ---
+
+udp_client -> socket
+udp_server -> socket
+
+sender -> socket, packet
+receiver -> socket, packet
+packet -> struct
+
 
 ## 6) Protocol logic (high-level spec before implementation)
 This section is your “engineering spec” that you implement against. Keep it precise but not code-heavy.
@@ -193,6 +203,8 @@ while not done:
     retransmit according to phase rules
 ```
 
+
+
 ### 6.2 Receiver behavior
 Describe receiver rules:
 - accept/discard conditions
@@ -208,7 +220,7 @@ on packet receive:
   else: handle duplicate/out-of-order according to phase rules
 ```
 
-### 6.3 Error/loss injection spec (if required by phase)
+### 6.3 Error/loss injection spec (if required by phase) -> (N/A for Phase 1)
 If the phase requires injection, state:
 - where injection occurs in the pipeline (exact point)
 - probability model and RNG seed usage
@@ -217,7 +229,7 @@ If the phase requires injection, state:
 
 ---
 
-## 7) Experiments + metrics plan (required if phase requires figures/plots)
+## 7) Experiments + metrics plan (required if phase requires figures/plots) -> (N/A For Phase 1)
 ### 7.1 Measurement definition
 Define completion time precisely:
 - start moment:

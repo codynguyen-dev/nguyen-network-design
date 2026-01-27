@@ -10,7 +10,7 @@ mechanisms and performance evaluation.
 ## Team
 | Name | Email | Primary responsibility |
 |---|---|---|
-|  |  |  |
+| Cody Nguyen | cody_nguyen@student.uml.edu | UDP echo + RDT 1.0 file transfer |
 |  |  |  |
 |  |  |  |
 
@@ -94,24 +94,33 @@ python src/sender.py --host 127.0.0.1 --port 9000 --file data/sample.jpg --seed 
 ## Required Demo Scenarios (Current Phase)
 Provide the exact commands used to demonstrate each required scenario.
 
-### Scenario 1: __________
+### Scenario 1: UDP HELLO + ECHO (Phase 1a)
 Receiver:
 ```bash
-...
+python src/udp_server.py --port 8000 --log-level info --seed 0
 ```
 Sender:
 ```bash
-...
+python src/udp_client.py --host 127.0.0.1 --port 8000 --log-level info --seed 0
 ```
 Expected behavior:
-- ...
+- The client sends "HELLO" to the UDP server
+- The server echoes "HELLO" back to the client 
 
 ### Scenario 2: __________
-...
+Receiver:
+```bash
+python src/receiver.py --port 9000 --out results/received.bmp --seed 0 --log-level info
+```
+Sender:
+```bash
+python src/sender.py --host 127.0.0.1 --port 9000 --file data/input.bmp --seed 0 --log-level info
+```
+Expected behavior:
+- Sender sends a BMP file over UDP
+- Receiver reconstructs it correctly and writes it to the results/ folder 
 
----
-
-## Figures / Plots (if required by phase)
+## Figures / Plots (if required by phase) -> (N/A for Phase 1)
 ### Reproduce experiment runs
 Your repo must include a script that can reproduce required sweeps and output CSV.
 
@@ -134,6 +143,8 @@ python scripts/plot_results.py --in results/phase4.csv --out results/phase4.png
 
 ## Known Issues / Limitations
 List any limitations honestly.
+
+- RDT 1.0 assumes a reliable channel and does not handle packet loss or corruption
 
 ---
 

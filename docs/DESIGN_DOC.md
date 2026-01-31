@@ -21,9 +21,11 @@ both parts run reliably end-end and the final received file matches the sent fil
 ### 1.1 Demo deliverable
 You will submit a **screen recording** demonstrating the required scenarios.
 
-- **Private YouTube link:** *(fill in at submission time)*  
-  - Link:
-  - Timestamped outline (mm:ss → scenario name):
+- **Private YouTube link:**
+- Scenario 1 demo 
+  - Link: https://youtu.be/6CIewuqCaZ0
+- Scenario 2 demo
+  - Link: https://youtu.be/1fbLLyVB-Ag
 
 ### 1.2 Required demo scenarios
 Fill in the scenarios required by the phase spec.

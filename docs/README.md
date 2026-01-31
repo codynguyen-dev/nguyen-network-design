@@ -79,46 +79,35 @@ Your program must support these standardized flags so the TA can run and grade c
 ---
 
 ## Quick Start (Run Locally)
-### Start Receiver
-```bash
-python src/receiver.py --port 9000 --out results/received.bin --seed 0
-```
-
-### Run Sender
-```bash
-python src/sender.py --host 127.0.0.1 --port 9000 --file data/sample.jpg --seed 0
-```
-
----
-
-## Required Demo Scenarios (Current Phase)
-Provide the exact commands used to demonstrate each required scenario.
 
 ### Scenario 1: UDP HELLO + ECHO (Phase 1a)
 Receiver:
 ```bash
-python src/udp_server.py --port 8000 --log-level info --seed 0
+python src/udp_server.py
 ```
 Sender:
 ```bash
-python src/udp_client.py --host 127.0.0.1 --port 8000 --log-level info --seed 0
+python src/udp_client.py
 ```
 Expected behavior:
 - The client sends "HELLO" to the UDP server
 - The server echoes "HELLO" back to the client 
 
-### Scenario 2: __________
+### Scenario 2: RDT 1.0 protocol
 Receiver:
 ```bash
-python src/receiver.py --port 9000 --out results/received.bmp --seed 0 --log-level info
+python src/receiver.py --port 9000 --out results/received.bmp
 ```
 Sender:
 ```bash
-python src/sender.py --host 127.0.0.1 --port 9000 --file data/input.bmp --seed 0 --log-level info
+python src/sender.py --host 127.0.0.1 --port 9000 --file data/sample1.bmp
 ```
 Expected behavior:
-- Sender sends a BMP file over UDP
+- Sender reads data/sample1.bmp
+- File is packetized into fixed-size packets
+- Packets are sent one at a time
 - Receiver reconstructs it correctly and writes it to the results/ folder 
+- Terminates cleanly with EOT packet
 
 ## Figures / Plots (if required by phase) -> (N/A for Phase 1)
 ### Reproduce experiment runs

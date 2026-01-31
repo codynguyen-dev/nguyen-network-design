@@ -84,7 +84,6 @@ For Phase 1(b), I will follow the provided RDT 1.0 sender/receiver state diagram
   - responsibilities: listens on UDP port, can echo messages, receives packet bytes, and extracts payload and writes to output file in order
 - **Shared modules/utilities**
   - packet encode/decode: packets into bytes, parse bytes back into original data
-  - checksum: verify data integrity
   - logging/timing: basic printing/logging for debugging
   - CLI/config parsing: parse --host, --port, --file, --out
 
@@ -235,12 +234,12 @@ This replaces “risks” with what actually matters for correctness.
 ### 8.1 Edge cases you expect
 List the top edge cases you will explicitly test.
 
-| Edge case | Why it matters | Expected behavior |
-|---|---|---|
-| last packet smaller than payload size | correct file reconstruction | receiver writes exact bytes |
-| duplicate packets/ACKs | protocol correctness | ignored or re-ACKed |
-| corrupted header | checksum coverage | drop / request retransmit |
-| termination marker handling | clean shutdown | no deadlocks |
+| Edge case                             | Why it matters              | Expected behavior             |
+|---------------------------------------|-----------------------------|-------------------------------|
+| last packet smaller than payload size | correct file reconstruction | receiver writes exact bytes   |
+| file size not multiple of 1024        | correct reconstruction      | last packet written correctly |
+| corrupted header                      | checksum coverage           | drop / request retransmit     |
+| termination marker handling           | clean shutdown              | no deadlocks                  |
 
 ### 8.2 Tests you will write because of these edge cases
 List concrete tests (unit/integration) that map to the edge cases.
